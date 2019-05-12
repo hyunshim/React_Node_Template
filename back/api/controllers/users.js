@@ -10,6 +10,7 @@ exports.get_all_users = (req, res, next) => {
             const response = {
                 user: users.map(user => {
                     return {
+                        id: user._id,
                         name: user.name,
                     }
                 })
@@ -46,9 +47,9 @@ exports.create_user = (req, res, next) => {
             message: `Created user of id '${user._id}' successfully`,
             user: user
         }
-        res.status(201).json({response});
+        res.status(201).json({ response });
     })
-    .catch(error => { res.status(500).json({ message: `Unable to get CREATE user of id '${id}'`, error: error }) })
+        .catch(error => { res.status(500).json({ message: `Unable to get CREATE user of id '${id}'`, error: error }) })
 }
 
 exports.delete_user = (req, res, next) => {
@@ -60,7 +61,27 @@ exports.delete_user = (req, res, next) => {
             const response = {
                 message: `Deleted user of id '${user._id}' successfully`
             }
-            res.status(200).json({ response })
+            res.status(200).json({ response });
         })
         .catch(error => { res.status(500).json({ message: `Unable to DELETE user of id '${id}'`, error: error }) })
+}
+
+exports.update_user = (req, res, next) => {
+    const id = req.params.userId;
+    const updateOps = {};
+    console.log(Object.entries(req.body))
+    for (const ops of Object.entries(req.body)) {
+        updateOps[ops[0]] = ops[1];
+    }
+    User.update({ _id: id }, {$set: updateOps})
+        .select(selectFields)
+        .exec()
+        .then(user => {
+            const response = {
+                message: `Updated user of id '${user._id}' successfully`,
+                user: user
+            }
+            res.status(200).json({ response });
+        })
+        .catch(error => { res.status(500).json({ message: `Unable to UPDATE user of id '${id}'`, error: error }) })
 }
