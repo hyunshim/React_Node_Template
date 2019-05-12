@@ -7,6 +7,8 @@ const dotenv = require('dotenv');
 dotenv.config();
 
 // MongoDB Connection
+mongoose.connect('mongodb+srv://hs:'+process.env.MONGO_PW+'@kb-tqtfs.mongodb.net/test?retryWrites=true', {useNewUrlParser: true})
+mongoose.Promise = global.Promise;
 
 // Logger
 app.use(logger('dev'));
